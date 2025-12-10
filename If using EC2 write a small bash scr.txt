@@ -1,0 +1,35 @@
+If using EC2: write a small bash script that pulls the ECR image and runs the container (optionally via docker‑compose).​
+
+Manually deploy once (kubectl apply or ssh + script) to ensure the app is reachable via Load Balancer/IP.
+
+Step 5 – Add CI with GitHub Actions
+In GitHub, add secrets: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY (or OIDC), AWS_REGION, ECR_REPO, and optional EKS_CLUSTER_NAME.​
+
+Create .github/workflows/ci.yml with a job that:​
+
+Checks out code.
+
+Installs Node.js dependencies and runs tests.
+
+Optionally runs lint/static checks.
+
+This gives every push automatic build + test.
+
+Step 6 – Extend to full CD (build → ECR → deploy)
+Add steps to build, tag, and push the Docker image to ECR using official AWS GitHub Actions (configure-aws-credentials, login to ECR, docker build & push).​
+
+Add a deploy step:​
+
+For EKS: configure kubeconfig in the workflow and run kubectl set image or kubectl apply -f k8s/.
+
+For EC2: SSH into EC2 from the workflow and run the deploy script to pull the new image and restart the container.
+
+Now your “push to main → new version live” pipeline is ready.
+
+Step 7 – Basic monitoring and polishing
+Enable CloudWatch logs and metrics from your EKS nodes or EC2 instance; ensure container logs reach CloudWatch.​
+
+For EKS, optionally install Prometheus + Grafana using a Helm chart and build a simple app dashboard (requests, errors).​
+
+Finally, document the project in the repo README (architecture diagram + pipeline steps) and extract 3–4 strong resume bullets describing the end‑to‑end CI/CD + AWS + monitoring story.​
+
