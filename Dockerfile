@@ -8,9 +8,7 @@ RUN npm install
 
 COPY . .
 
-RUN npm test
+RUN chmod +x node_modules/.bin/jest && npm test
 
 EXPOSE 3000
-
 CMD ["npm", "start"]
-
